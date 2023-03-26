@@ -1,0 +1,47 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Browser/WASM Example</title>
+</head>
+
+<body>
+  <script type="module">
+    import {base64} from './rfc4648.js';
+
+    // base64 encoded or-tools model for example.cc
+    const model = base64.parse("EgcKAXgSAgADEgcKAXkSAgADEgcKAXoSAgADGjNiMQoCAAESCwH///////////8BGh6AgICAgICAgIAB////////////AQH//////////38aM2IxCgIBAhILAf///////////wEaHoCAgICAgICAgAH///////////8BAf//////////fxozYjEKAgACEgsB////////////ARoegICAgICAgICAAf///////////wEB//////////9/");
+
+    const worker = await navigator.serviceWorker.register("worker.js", {
+      type: 'module',
+      scope: "/",
+    });
+
+    navigator.serviceWorker.addEventListener("message", (event) => {
+      console.log("solution", event.data.solution);
+    });
+
+    // watch and wait worker te become active
+    const activeWorker = await watchWorkerActive(worker, 5000);
+    if (activeWorker) {
+      activeWorker.postMessage({ model })
+    }
+
+    // helpers
+    async function watchWorkerActive(worker, timeout) {
+      for (;!worker.active && timeout > 0; timeout -= 25) {
+        await sleep(25);
+      }
+      return worker.active
+    }
+
+    function sleep(duration) {
+      return new Promise((resolve, _) => {
+        setTimeout(() => resolve(), duration);
+      })
+    }
+  </script>
+</body>
+</html>

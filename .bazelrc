@@ -1,0 +1,1 @@
+build --incompatible_enable_cc_toolchain_resolution --proto_compiler=//tools:protoc --copt="-w"

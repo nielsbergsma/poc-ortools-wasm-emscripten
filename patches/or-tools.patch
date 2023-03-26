@@ -1,0 +1,15 @@
+diff --git a/ortools/base/sysinfo.cc b/ortools/base/sysinfo.cc
+index aae73b68f9..796eed1fa2 100644
+--- a/ortools/base/sysinfo.cc
++++ b/ortools/base/sysinfo.cc
+@@ -34,7 +34,9 @@
+ namespace operations_research {
+ // GetProcessMemoryUsage
+ 
+-#if defined(__APPLE__) && defined(__GNUC__)  // Mac OS X
++#if defined(__EMSCRIPTEN__)
++int64_t GetProcessMemoryUsage() { return 0; }
++#elif defined(__APPLE__) && defined(__GNUC__)  // Mac OS X
+ int64_t GetProcessMemoryUsage() {
+   task_t task = MACH_PORT_NULL;
+   struct task_basic_info t_info;
